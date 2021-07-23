@@ -273,7 +273,13 @@ def train_model(model_name):
 
 
     history = model.fit(X, y, epochs=epochs, verbose=2,callbacks=[checkpoint], batch_size=batch_size,validation_split=0.1)
-  
+    
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    tflite_quant_model = converter.convert()
+#saving converted model in "converted_quant_model.tflite" file
+    open(model_file_name+'.tflite', "wb").write(tflite_quant_model)
+    shutil.rmtree(model_file_name+'/')
     result = "Your bot is getting trained. Please wait for 10 minutes and restart your server."
     t2=time.time()
     print(t2-t1)
